@@ -1,20 +1,37 @@
 ---
 title: 'README'
+output: 
+  md_document:
+    variant: markdown_github
 ---
 
 ```{r load_data, include=FALSE, message=FALSE, warning=FALSE}
-## Default Language: English
-Sys.setenv(LANG = "en")
-Sys.setlocale("LC_TIME", "English")
 
 library(lubridate)
 
+# To translate the month
+translate_month_to_english <- function(date) {
+  month_names_es <- month.name
+  month_names_en <- c("January", "February", "March", "April", "May", "June", 
+                      "July", "August", "September", "October", "November", "December")
+  
+  formatted_date <- format(date, "%B %d, %Y")
+  for (i in 1:12) {
+    formatted_date <- gsub(month_names_es[i], month_names_en[i], formatted_date)
+  }
+  return(formatted_date)
+}
+
+# Load csv last updated
 last_file <- list.files(path = "Last update/", pattern = paste0("^outbreaks"), full.names = TRUE)
-rdata_file <- last_file[grepl("\\.csv$", last_file)]
+rdata_file <- last_file[grepl(".csv$", last_file)]
 file_name <- basename(rdata_file)
 date_string <- sub(".*_(\\d{2})(\\d{2})(\\d{4}).*", "\\1-\\2-\\3", file_name)
 date_obj <- dmy(date_string)
-formatted_date <- format(date_obj, "%B %d, %Y")
+
+# English format
+formatted_date <- translate_month_to_english(date_obj)
+formatted_month <- gsub(" ", " ", translate_month_to_english(date_obj))  # Para el mes y año
 
 last_version <- read.csv(rdata_file)
 
@@ -23,8 +40,8 @@ num_diseases <- nlevels(factor(last_version$icd104n))
 
 ```
 
-### **'A global dataset of pandemic- and epidemic-prone disease outbreaks'**  
-**Torres Munguía, J.A.; Badarau, F.C.; Díaz Pavez, L.R.; Martínez-Zarzoso, I.; & Wacker, Konstantin M.**
+### **A global dataset of pandemic- and epidemic-prone disease outbreaks**  
+### **Torres Munguía, J.A.; Badarau, F.C.; Díaz Pavez, L.R.; Martínez-Zarzoso, I.; & Wacker, Konstantin M.**
 
 Here you can find a new dataset of infectious disease outbreaks collected from the [Disease Outbreak News](https://www.who.int/emergencies/disease-outbreak-news) and the [Coronavirus Dashboard](https://data.who.int/dashboards/covid19) produced by the World Health Organization (WHO). 
 
@@ -38,9 +55,10 @@ The dataset is the result of collaborative work by a team of researchers from th
 
 The findings of the first version of the dataset have been published in Springer Nature's Scientific Data.  
 [Read the paper by clicking here!](https://www.nature.com/articles/s41597-022-01797-2). Additionally, the data, metadata, and the code to replicate the first version of this dataset are publicly available on Figshare. [You can download them by clicking here!](https://figshare.com/articles/dataset/A_global_dataset_of_pandemic-_and_epidemic-prone_disease_outbreaks/17207183)
- 
+
 #### IMPORTANT NOTE #####
 From October 2024, this project is being updated by Dr. Juan Armando Torres Munguía. In case of questions, requests, or collaborations, you can contact me via [GitHub](https://github.com/jatorresmunguia), [X](https://x.com/jtorresmunguia), or [here](https://juan-torresmunguia.netlify.app/contact/). 
 
-The last version of the dataset was updated on `r print(formatted_date)` and contains information on `r print()` **outbreaks**, associated with `r print(num_diseases)` infectious diseases that occurred from January 1996 to `r print(format(date_obj, "%B %Y"))` in `r print(num_countries)` countries and territories worldwide. The data, metadata, and the code to replicate the last version of this dataset are publicly available on this GitHub.
+The last version of the dataset was updated on `r formatted_date` and contains information on `r nrow(last_version)` **outbreaks**, associated with `r num_diseases` infectious diseases that occurred from January 1996 to `r formatted_month` in `r num_countries` countries and territories worldwide.
+
 

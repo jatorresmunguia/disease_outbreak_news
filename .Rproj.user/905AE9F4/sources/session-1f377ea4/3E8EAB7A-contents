@@ -1,3 +1,0 @@
-
-save(AllDONs, file = "dons_all_25032022.RData")
-write.csv(AllDONs, file = "dons_all_25032022.csv")

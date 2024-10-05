@@ -1,6 +1,0 @@
-
-last_dons_raw <- last_dons_raw |> 
-  arrange(desc(Year), desc(Month), desc(Day), desc(Link)) |> # Ordering data by date
-  mutate(rowid = seq(max_dons_id_prev+length(.$Year):(max_dons_id_prev+1)))
-
-
