@@ -8,30 +8,17 @@ output:
 ```{r load_data, include=FALSE, message=FALSE, warning=FALSE}
 
 library(lubridate)
+library(stringi)
 
-# To translate the month
-translate_month_to_english <- function(date) {
-  month_names_es <- month.name
-  month_names_en <- c("January", "February", "March", "April", "May", "June", 
-                      "July", "August", "September", "October", "November", "December")
-  
-  formatted_date <- format(date, "%B %d, %Y")
-  for (i in 1:12) {
-    formatted_date <- gsub(month_names_es[i], month_names_en[i], formatted_date)
-  }
-  return(formatted_date)
-}
-
-# Load csv last updated
 last_file <- list.files(path = "Last update/", pattern = paste0("^outbreaks"), full.names = TRUE)
 rdata_file <- last_file[grepl(".csv$", last_file)]
 file_name <- basename(rdata_file)
 date_string <- sub(".*_(\\d{2})(\\d{2})(\\d{4}).*", "\\1-\\2-\\3", file_name)
 date_obj <- dmy(date_string)
 
-# English format
-formatted_date <- translate_month_to_english(date_obj)
-formatted_month <- gsub(" ", " ", translate_month_to_english(date_obj))  # Para el mes y año
+# Formatear la fecha en inglés
+formatted_date <- format(date_obj, "%B %d, %Y")  
+formatted_month <- format(date_obj, "%B %Y")     
 
 last_version <- read.csv(rdata_file)
 
@@ -60,5 +47,4 @@ The findings of the first version of the dataset have been published in Springer
 From October 2024, this project is being updated by Dr. Juan Armando Torres Munguía. In case of questions, requests, or collaborations, you can contact me via [GitHub](https://github.com/jatorresmunguia), [X](https://x.com/jtorresmunguia), or [here](https://juan-torresmunguia.netlify.app/contact/). 
 
 The last version of the dataset was updated on `r formatted_date` and contains information on `r nrow(last_version)` **outbreaks**, associated with `r num_diseases` infectious diseases that occurred from January 1996 to `r formatted_month` in `r num_countries` countries and territories worldwide.
-
 
