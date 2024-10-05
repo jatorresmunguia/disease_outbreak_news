@@ -6,7 +6,7 @@ output:
 ---
 
 ```{r load_data, include=FALSE, message=FALSE, warning=FALSE}
-
+Sys.setenv(LANG = "en")
 library(lubridate)
 library(stringi)
 
@@ -16,9 +16,8 @@ file_name <- basename(rdata_file)
 date_string <- sub(".*_(\\d{2})(\\d{2})(\\d{4}).*", "\\1-\\2-\\3", file_name)
 date_obj <- dmy(date_string)
 
-# Formatear la fecha en inglés
-formatted_date <- format(date_obj, "%B %d, %Y")  
-formatted_month <- format(date_obj, "%B %Y")     
+formatted_date <- format(date_obj, "%d/%m/%Y")  
+formatted_month <- format(date_obj, "%m/%Y")     
 
 last_version <- read.csv(rdata_file)
 
@@ -46,5 +45,5 @@ The findings of the first version of the dataset have been published in Springer
 #### IMPORTANT NOTE #####
 From October 2024, this project is being updated by Dr. Juan Armando Torres Munguía. In case of questions, requests, or collaborations, you can contact me via [GitHub](https://github.com/jatorresmunguia), [X](https://x.com/jtorresmunguia), or [here](https://juan-torresmunguia.netlify.app/contact/). 
 
-The last version of the dataset was updated on `r formatted_date` and contains information on `r nrow(last_version)` **outbreaks**, associated with `r num_diseases` infectious diseases that occurred from January 1996 to `r formatted_month` in `r num_countries` countries and territories worldwide.
+The last version of the dataset was updated on `r formatted_date` and contains information on `r nrow(last_version)` **outbreaks**, associated with `r num_diseases` infectious diseases that occurred from 01/1996 to `r formatted_month` in `r num_countries` countries and territories worldwide.
 
