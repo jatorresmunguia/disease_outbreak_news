@@ -50,5 +50,5 @@ can contact me via [GitHub](https://github.com/jatorresmunguia),
 
 The last version of the dataset was updated on 30/09/2024 and contains
 information on 3050 **outbreaks**, associated with 85 infectious
-diseases that occurred from 01/1996 to 09/2024 in 236 countries and
-territories worldwide.
+diseases that occurred from 01/01/1996 to 30/09/2024 in 236 countries
+and territories worldwide.

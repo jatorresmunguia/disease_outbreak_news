@@ -45,5 +45,5 @@ The findings of the first version of the dataset have been published in Springer
 #### IMPORTANT NOTE #####
 From October 2024, this project is being updated by Dr. Juan Armando Torres Munguía. In case of questions, requests, or collaborations, you can contact me via [GitHub](https://github.com/jatorresmunguia), [X](https://x.com/jtorresmunguia), or [here](https://juan-torresmunguia.netlify.app/contact/). 
 
-The last version of the dataset was updated on `r formatted_date` and contains information on `r nrow(last_version)` **outbreaks**, associated with `r num_diseases` infectious diseases that occurred from 01/1996 to `r formatted_month` in `r num_countries` countries and territories worldwide.
+The last version of the dataset was updated on `r formatted_date` and contains information on `r nrow(last_version)` **outbreaks**, associated with `r num_diseases` infectious diseases that occurred from 01/01/1996 to `r formatted_date` in `r num_countries` countries and territories worldwide.
 
