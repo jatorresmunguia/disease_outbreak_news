@@ -1,0 +1,12 @@
+
+last_file <- list.files(path = "Last update/", pattern = paste0("^outbreaks"), full.names = TRUE)
+rdata_file <- last_file[grepl("\\.csv$", last_file)]
+file_name <- basename(rdata_file)
+date_string <- sub(".*_(\\d{2})(\\d{2})(\\d{4}).*", "\\1-\\2-\\3", file_name)
+date_obj <- dmy(date_string)
+formatted_date <- format(date_obj, "%B %d, %Y")
+
+last_version <- read.csv(rdata_file)
+
+num_countries <- nlevels(factor(last_version$Country))
+num_diseases <- nlevels(factor(last_version$icd104n))

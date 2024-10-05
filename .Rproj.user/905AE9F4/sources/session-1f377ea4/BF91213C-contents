@@ -1,0 +1,211 @@
+---
+title: 'Nigeria female genital cutting analysis: data preparation'
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r load_packages, include=TRUE, message=FALSE, warning=FALSE}
+
+# Loading required libraries and setting up
+library(haven)      
+library(dplyr)
+library(plyr)
+library(tidyverse)  
+library(labelled)   
+library(survey)     
+library(sjlabelled)
+library(mboost)
+
+```
+
+```{r load_data, include=TRUE, message=FALSE, warning=FALSE}
+
+# Reading all files 
+# file_names <- list.files(recursive = TRUE, pattern = "\\.SAV$")
+# NGHR7BFL and NGIR7BFL
+file_names <- c("Data/NGHR7BSV/NGHR7BFL.SAV", "Data/NGIR7BSV/NGIR7BFL.SAV")
+
+# Loop through each file
+for (i in seq_along(file_names)) {
+  # Extract the file name without extension
+  base_name <- tools::file_path_sans_ext(basename(file_names[i]))
+  
+  # Read the file using appropriate function
+  data <- haven::read_sav(file_names[i])
+  
+  is.haven_labelled <- function(x){
+  any(class(x) == "haven_labelled")
+  }
+  
+  # Transforming the data to be able to read the labels of the answers
+  data %>%
+  mutate_if(is.haven_labelled, haven::as_factor) %>%
+  rename_all(tolower) -> data
+  
+  # Assign the data frame to a dynamically created object
+  assign(base_name, data)
+  
+  }
+
+# Renaming files
+#Births_Recode <- NGBR7BFL
+#Couples_Recode <- NGCR7AFL
+#Fieldworker_Questionnaire <- NGFW7AFL
+Household_Recode <- NGHR7BFL
+Individual_Recode <- NGIR7BFL
+#Children_Recode <- NGKR7BFL
+#Men_Recode <- NGMR7AFL
+#Household_Member <- NGPR7BFL
+
+# Remove unneccesary files
+rm(data, base_name, file_names, i, new_name, 
+   NGBR7BFL, NGCR7AFL, NGFW7AFL, NGHR7BFL, NGIR7BFL, NGKR7BFL, NGMR7AFL, NGPR7BFL)
+
+```
+
+```{r response_variable, include=TRUE, message=FALSE, warning=FALSE}
+
+# Female genital cut 
+# Yes: women and girls who answered Yes to g102
+# No: women and girls who answered No to g102 or No to g100
+Individual_Recode <- Individual_Recode %>%
+  mutate(fg_fcircum_wm = 
+           case_when(
+             g102 == "Yes" ~ "Yes",
+             g100 == "No" | g102 == "No" ~ "No")) %>% 
+  set_variable_labels(fg_fcircum_wm = "Circumcised among women age 15-49") %>%
+  mutate(wt = v005/1000000) %>%
+  mutate(heard_fgm = g100) %>%
+  set_variable_labels(heard_fgm = "Ever heard of fgm") %>%
+  mutate(age_at_fgm = g106) %>%
+  mutate(child_fgm = g108) %>%
+  mutate(child_age_at_fgm = g113)
+
+```
+
+```{r covariates, include=TRUE, message=FALSE, warning=FALSE}
+
+# Individual
+Individual_Recode_sub <- Individual_Recode %>%
+# Individual
+  mutate(age_years = v012) %>% # age
+  mutate(age_group = v013) %>% # age groups: 15-19 20-24 25-29 30-34 35-39 40-44 45-49
+  mutate(marital_status = v501) %>% # Current marital status
+  mutate(ever_union = v502) %>% # Currently/formerly/never in union
+  mutate(current_union = v504) %>% # Currently residing with husband/partner
+  mutate(ethnicity = v131) %>% # ethnicity
+  mutate(ethnic_group = case_when(v131 == "Fulani" ~ "Fulani", 
+                                  v131 == "Hausa" ~ "Hausa",
+                                  v131 == "Yoruba" ~ "Yoruba", 
+                                  TRUE ~ "Other")) %>% # ethnicity
+  mutate(education = v106) %>% # Highest educational level
+  mutate(religion = case_when(v130 == "Catholic" | v130 == "Other Christian" ~ "Catholic_Christian",
+                              v130 == "Islam" ~ "Islam",
+                              v130 == "Traditionalist" | v130 == "Other" ~ "Other")) %>% # Religion
+  mutate(age_first_cohabitation = v511) %>% # Age at first cohabitation
+  mutate(age_group_cohabitation = cut(v511, c(0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49), 
+                                      labels = c("0_4", "5_9", "10_14", "15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))) %>% 
+  mutate(age_first_sex = v531) %>% # Age at first sex (imputed)
+  mutate(age_group_sex = case_when(v531 != "Not had sex" & v531 != "Inconsistent" & v531 != "Don't know" ~ cut(as.numeric(as.character(v531)), c(0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49), 
+                                   labels = c("0_4", "5_9", "10_14", "15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49")))) %>%
+  mutate(total_child = v201) %>% # Total children ever born
+  mutate(age_first_child = v212) %>% # Age of respondent at 1st birth
+  mutate(age_group_child = cut(v212, c(0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49), 
+                               labels = c("0_4", "5_9", "10_14", "15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))) %>% 
+# Community
+  mutate(type_community = v025) %>% # Type of place of residence
+  mutate(region = substr(v022, 1, 2)) %>%
+  mutate(state = str_replace(str_replace(v022, "\\s[^\\s]+$", ""), "^[^\\s]+\\s", "")) %>%
+  mutate(id_cluster = str_pad(v001, 5, pad = "0")) %>%
+  mutate(id_household = str_pad(v002, 5, pad = "0")) %>%
+  mutate(id_hh = paste0(id_cluster, id_household)) %>%
+  select(caseid, id_hh, 
+         v005, wt, heard_fgm, fg_fcircum_wm, age_at_fgm,
+         age_years, age_group, marital_status, ever_union, current_union, ethnicity, ethnic_group, education, religion, age_first_cohabitation, age_group_cohabitation, age_first_sex, age_group_sex, age_first_child, age_group_child, total_child, type_community, region, state)
+  
+# Household_Recode
+Household_Recode_sub <- Household_Recode %>%
+# Household
+  mutate(wealth_combined = hv270) %>% # Wealth index combined
+  mutate(wealth_factor_combined = hv271) %>% # Wealth index factor score combined (5 decimals)
+  mutate(wealth_urbrur = hv270a) %>% # Wealth index for urban/rural
+  mutate(wealth_urbrur_factor = hv271a) %>% # Wealth index factor score for urban/rural (5 decimals)
+  mutate(id_cluster = str_pad(hv001, 5, pad = "0")) %>%
+  mutate(id_household = str_pad(hv002, 5, pad = "0")) %>%
+  mutate(id_hh = paste0(id_cluster, id_household)) %>%
+  mutate(psu = hv021) %>% # Primary sampling unit
+  mutate(strata = hv022) %>% # Stratification used in sample design
+  select(id_hh, psu, strata, wealth_combined, wealth_factor_combined, wealth_urbrur, wealth_urbrur_factor)
+
+data_fgm <- Individual_Recode_sub %>%
+  left_join(Household_Recode_sub, by = "id_hh")
+
+```
+
+```{r new_variables, include=TRUE, message=FALSE, warning=FALSE}
+
+data_fgm <- data_fgm %>%
+  mutate(age_at_fgm_num = as.numeric(as.character(age_at_fgm))) %>%
+  mutate(age_group_at_fgm = case_when((age_at_fgm_num >= 0 & age_at_fgm_num < 5) | age_at_fgm == "During infancy" ~ "0_4",
+                                      age_at_fgm_num >= 5 & age_at_fgm_num < 10 ~ "5_9",
+                                      age_at_fgm_num >= 10 & age_at_fgm_num < 15 ~ "10_14", 
+                                      age_at_fgm_num >= 15 & age_at_fgm_num < 20 ~ "15_19",
+                                      age_at_fgm_num >= 20 & age_at_fgm_num < 25 ~ "20_24",
+                                      age_at_fgm_num >= 25 & age_at_fgm_num < 30 ~ "25_29",
+                                      age_at_fgm_num >= 30 & age_at_fgm_num < 35 ~ "30_34",
+                                      age_at_fgm_num >= 35 & age_at_fgm_num < 40 ~ "35_39",
+                                      age_at_fgm_num >= 40 & age_at_fgm_num < 45 ~ "40_44",
+                                      age_at_fgm_num >= 45 & age_at_fgm_num < 49 ~ "45_49")) %>%
+  mutate(age_group_at_fgm_num = case_when((age_at_fgm_num >= 0 & age_at_fgm_num < 5) | age_at_fgm == "During infancy" ~ 0,
+                                      age_at_fgm_num >= 5 & age_at_fgm_num < 10 ~ 1,
+                                      age_at_fgm_num >= 10 & age_at_fgm_num < 15 ~ 2, 
+                                      age_at_fgm_num >= 15 & age_at_fgm_num < 20 ~ 3,
+                                      age_at_fgm_num >= 20 & age_at_fgm_num < 25 ~ 4,
+                                      age_at_fgm_num >= 25 & age_at_fgm_num < 30 ~ 5,
+                                      age_at_fgm_num >= 30 & age_at_fgm_num < 35 ~ 6,
+                                      age_at_fgm_num >= 35 & age_at_fgm_num < 40 ~ 7,
+                                      age_at_fgm_num >= 40 & age_at_fgm_num < 45 ~ 8,
+                                      age_at_fgm_num >= 45 & age_at_fgm_num < 49 ~ 9)) %>%
+mutate(age_group_num = case_when((age_years >= 0 & age_years < 5) | age_at_fgm == "During infancy" ~ 0,
+                                        age_years >= 5 & age_years < 10 ~ 1,
+                                        age_years >= 10 & age_years < 15 ~ 2, 
+                                        age_years >= 15 & age_years < 20 ~ 3,
+                                        age_years >= 20 & age_years < 25 ~ 4,
+                                        age_years >= 25 & age_years < 30 ~ 5,
+                                        age_years >= 30 & age_years < 35 ~ 6,
+                                        age_years >= 35 & age_years < 40 ~ 7,
+                                        age_years >= 40 & age_years < 45 ~ 8,
+                                        age_years >= 45 & age_years < 49 ~ 9)) %>%
+  mutate(ever_union_bin = case_when(ever_union == "Never in union" ~ "never",
+                                    ever_union == "Currently in union/living with a man" | ever_union == "Formerly in union/living with a man" ~ "ever")) %>%
+  mutate(age_at_union = case_when(ever_union == "Never in union" ~ "never",
+                                  ever_union == "Currently in union/living with a man" | ever_union == "Formerly in union/living with a man" ~ age_group_cohabitation)) %>%
+  mutate(age_group_at_sex_ = case_when(age_first_sex == "Not had sex" ~ "never",
+                                       age_first_sex != "Not had sex" ~ age_group_sex)) %>%  
+  mutate(rururb = case_when(str_detect(strata, "Rural") ~ "rural",
+                            str_detect(strata, "Urban") ~ "urban",
+                            TRUE ~ NA_character_))
+
+```
+
+```{r estimates, include=TRUE, message=FALSE, warning=FALSE}
+# This is just to compare to official estimates
+# Complex sample design parameters
+DHSdesign <- svydesign(ids = ~data_fgm$psu, strata = ~data_fgm$strata, weights = data_fgm$wt, nest = TRUE, 
+                       survey.lonely.psu = "adjust", data = data_fgm)
+
+svymean(~data_fgm$heard_fgm, DHSdesign, na.rm = TRUE)
+
+svymean(~data_fgm$fg_fcircum_wm, DHSdesign, na.rm = TRUE)
+
+svyby(~heard_fgm, ~age_group, DHSdesign, na.rm = TRUE, FUN = svymean)
+
+svyby(~fg_fcircum_wm, ~age_group, DHSdesign, na.rm = TRUE, FUN = svymean)
+
+```
+
+```{r data_for_model, include=TRUE, message=FALSE, warning=FALSE}
+
+save(list = "data_fgm", file = "data_fgm.RData")
+
+```
