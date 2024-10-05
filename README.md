@@ -3,10 +3,11 @@
 ### **Torres Munguía, J.A.; Badarau, F.C.; Díaz Pavez, L.R.; Martínez-Zarzoso, I.; & Wacker, Konstantin M.**
 
 Here you can find a new dataset of infectious disease outbreaks
-collected from the [Disease Outbreak
-News](https://www.who.int/emergencies/disease-outbreak-news) and the
-[Coronavirus Dashboard](https://data.who.int/dashboards/covid19)
-produced by the World Health Organization (WHO).
+collected from the
+<a href="https://www.who.int/emergencies/disease-outbreak-news" target="_blank">Disease
+Outbreak News</a> and the [Coronavirus
+Dashboard](https://data.who.int/dashboards/covid19) produced by the
+World Health Organization (WHO).
 
 **METHODOLOGICAL NOTE:** The unit of analysis in the database is an
 **outbreak**, defined as the occurrence of at least one case of a
