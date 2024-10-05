@@ -2,14 +2,7 @@
 
 The compiled database contains datasets and code in R language. Following the Fields of Research metadata schema from Figshare, the following files can be found in the repository:
 
-### 1. **code_to_extract_dons.R** (previously **DONs.R**)
-
-- **Categories**: Statistics, Epidemiology, Diseases
-- **Item type**: Software
-- **Keywords**: Disease Outbreak News (DONs), Coronavirus Dashboard, WHO, Global database, International Statistical Classification of Diseases, ISO 3166
-- **Description**: R-code to replicate the extraction of data from the Disease Outbreak News (DONs), available at www.who.int/emergencies/disease-outbreak-news, and the Coronavirus Dashboard, available at https://covid19.who.int/, produced by the World Health Organization (WHO). In addition, this code includes the integration, data correction, and use of standard names and definitions from the ISO 3166 and the International Statistical Classification of Diseases and related Health Problems
-
-### 2. **dons_raw_<DATE>.RData** and **dons_raw_<DATE>.csv** (previously **DONsRaw.RData** and **DONsRaw.csv**)
+### 1. **dons_raw_<DATE>.RData** and **dons_raw_<DATE>.csv** (previously **DONsRaw.RData** and **DONsRaw.csv**)
 
 - **Categories**: Statistics, Epidemiology, Diseases
 - **Item type**: Dataset
@@ -22,7 +15,7 @@ The compiled database contains datasets and code in R language. Following the Fi
 - **Date**: Date of registry.
 - **Link**: Link to the website for more details.
 
-### 3. **dons_all_<DATE>.RData** and **dons_all_<DATE>.csv** (previously **AllDONs.RData** and **AllDONs.csv**)
+### 2. **dons_all_<DATE>.RData** and **dons_all_<DATE>.csv** (previously **AllDONs.RData** and **AllDONs.csv**)
 
 - **Categories**: Statistics, Epidemiology, Diseases
 - **Item type**: Dataset
@@ -35,7 +28,7 @@ The compiled database contains datasets and code in R language. Following the Fi
 - **Date**: Date of registry.
 - **Link**: Link to the website for more details.
 
-### 4. **dons_unique_<DATE>.RData** and **dons_unique_<DATE>.csv** (previously **UniqueDONs.RData** and **UniqueDONs.csv**)
+### 3. **dons_unique_<DATE>.RData** and **dons_unique_<DATE>.csv** (previously **UniqueDONs.RData** and **UniqueDONs.csv**)
 
 - **Categories**: Statistics, Epidemiology, Diseases
 - **Item type**: Dataset
@@ -55,7 +48,7 @@ The compiled database contains datasets and code in R language. Following the Fi
 - **DONs**: List of DONs reporting the outbreak.
 - **Definition**: Definition of the disease according to the ICD-11.
 
-### 5. **covid_unique_<DATE>.RData** and **covid_unique_<DATE>.csv** (previously **COVIDOutbreaks.RData** and **COVIDOutbreaks.csv**))
+### 4. **covid_unique_<DATE>.RData** and **covid_unique_<DATE>.csv** (previously **COVIDOutbreaks.RData** and **COVIDOutbreaks.csv**))
 
 - **Categories**: Statistics, Epidemiology, Diseases
 - **Item type**: Dataset
@@ -75,7 +68,7 @@ The compiled database contains datasets and code in R language. Following the Fi
 - **DONs**: List of DONs reporting the outbreak.
 - **Definition**: Definition of the disease according to the ICD-11.
 
-### 6. **outbreaks_<DATE>.RData** and **outbreaks_<DATE>.csv** (previously **Outbreaks.RData** and **Outbreaks.csv**))
+### 5. **outbreaks_<DATE>.RData** and **outbreaks_<DATE>.csv** (previously **Outbreaks.RData** and **Outbreaks.csv**))
 
 - **Categories**: Statistics, Epidemiology, Diseases
 - **Item type**: Dataset
