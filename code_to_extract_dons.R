@@ -5,12 +5,9 @@
 # Packages
 library(RSelenium)
 library(rvest)
-library(dplyr)
-library(stringr)
 library(clock)
-library(writexl)
 library(tidyverse)
-library(purrr)
+library(writexl)
 
 ## Setwd
 setwd("disease_outbreak_news/")
