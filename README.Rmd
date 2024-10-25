@@ -9,8 +9,12 @@ output:
 Sys.setenv(LANG = "en")
 library(lubridate)
 library(stringi)
+library(httr)
+library(jsonlite)
 
-last_file <- list.files(path = "Last update/", pattern = paste0("^outbreaks"), full.names = TRUE)
+url_api <- "https://api.github.com/repos/jatorresmunguia/disease_outbreak_news/contents/Last%20update"
+last_file <- fromJSON(content(GET(url_api), as = "text"))$name[grepl(fromJSON(content(GET(url_api), as = "text"))$name, pattern = paste0("^outbreaks"))]
+
 rdata_file <- last_file[grepl(".csv$", last_file)]
 file_name <- basename(rdata_file)
 date_string <- sub(".*_(\\d{2})(\\d{2})(\\d{4}).*", "\\1-\\2-\\3", file_name)
@@ -19,7 +23,8 @@ date_obj <- dmy(date_string)
 formatted_date <- format(date_obj, "%d/%m/%Y")  
 formatted_month <- format(date_obj, "%m/%Y")     
 
-last_version <- read.csv(rdata_file)
+last_version <- read.csv(paste0("https://raw.githubusercontent.com/jatorresmunguia/disease_outbreak_news/refs/heads/main/Last%20update", "/", rdata_file),
+                         row.names = 1, header = TRUE)
 
 num_countries <- nlevels(factor(last_version$Country))
 num_diseases <- nlevels(factor(last_version$icd104n))
