@@ -24,7 +24,7 @@ formatted_date <- format(date_obj, "%d/%m/%Y")
 formatted_month <- format(date_obj, "%m/%Y")     
 
 last_version <- read.csv(paste0("https://raw.githubusercontent.com/jatorresmunguia/disease_outbreak_news/refs/heads/main/Last%20update", "/", rdata_file),
-                         row.names = 1, header = TRUE)
+                         header = TRUE)
 
 num_countries <- nlevels(factor(last_version$Country))
 num_diseases <- nlevels(factor(last_version$icd104n))
