@@ -18,12 +18,8 @@ library(glue)
 Sys.setenv(LANG = "en")
 Sys.setlocale("LC_TIME", "English")
 
-## Setwd
-setwd("disease_outbreak_news/")
-
 ## Moving last code
-#############
-# Definir los directorios
+### Definir los directorios
 current_file <- "code_to_extract_dons.R"
 history_folder <- "code_to_extract_dons_history"
 
