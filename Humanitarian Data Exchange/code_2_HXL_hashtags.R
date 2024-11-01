@@ -16,12 +16,12 @@ last_file <- fromJSON(content(GET(url_api), as = "text"))$name[grepl(fromJSON(co
 rdata_file <- last_file[grepl(".csv$", last_file)]
 file_name <- basename(rdata_file)
 last_version <- read.csv(paste0("https://raw.githubusercontent.com/jatorresmunguia/disease_outbreak_news/refs/heads/main/Last%20update", "/", rdata_file),
-                         row.names = 1, header = TRUE)
+                         header = TRUE)
 
 last_version <- last_version |>
   select(-c(icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3)) 
   
-rm(url_api, file_name, last_file, rdata_file, date_string)
+rm(url_api, file_name, last_file, rdata_file)
 
 ### Add some extra geographical attributes 
 #### Regional classification of the WHO
@@ -103,5 +103,5 @@ last_version <- last_version |>
 rm(cols2hxl)
 
 # Write Excel file
-write_xlsx(x = list(Data = last_version), path = "share_HDX/disease_outbreaks_HDX.xlsx")
+write_xlsx(x = list(Data = last_version), path = "data_2_share/disease_outbreaks_HDX.xlsx")
 
