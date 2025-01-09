@@ -19,7 +19,7 @@ Sys.setenv(LANG = "en")
 Sys.setlocale("LC_TIME", "English")
 
 ## Moving last code
-### Definir los directorios
+### Defining folders
 current_file <- "code_to_extract_dons.R"
 history_folder <- "code_to_extract_dons_history"
 
