@@ -27,7 +27,7 @@ last_version <- read.csv(paste0("https://raw.githubusercontent.com/jatorresmungu
                          header = TRUE)
 
 num_countries <- nlevels(factor(last_version$Country))
-num_diseases <- nlevels(factor(last_version$icd104n))
+num_diseases <- nlevels(factor(last_version$icd104c))
 
 ```
 

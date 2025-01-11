@@ -290,16 +290,17 @@ last_dons_raw4 <- last_dons_raw3 |>
 
 # Merge with icd
 last_dons_raw5 <- last_dons_raw4 |>
-  select(!Disease) |> 
+  select(!c(Disease)) |> 
   mutate(icd104n_lower = tolower(icd104n)) |>
+  select(!c(icd104n)) |> 
   plyr::join(
-    icd %>% mutate(icd104n_lower = tolower(icd104n)) |> select(-icd104n),
+    icd %>% mutate(icd104n_lower = tolower(icd104n)),
     by = "icd104n_lower",
     type = "left",
     match = "all"
   ) |>
   select(-icd104n_lower) |>
-  glimpse()
+    glimpse()
 
 # iso codes #
 iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
@@ -342,7 +343,7 @@ last_dons_raw8 <- last_dons_raw7 |>
   # seasonal influenza, rhinovirus, RSV, and human metapneumovirus in China
   mutate(Country = case_when(
     Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" ~ "China",
-    Country == "Democratic Republic of the Congo" ~ "Congo Democratic Republic of the",
+    grepl(Outbreak, pattern = "Democratic Republic of the Congo") ~ "Congo Democratic Republic of the",
     TRUE ~ Country
   )) |>
   # Oropouche virus disease - Region of the Americas
@@ -369,8 +370,9 @@ last_dons_raw8 <- last_dons_raw7 |>
 ## Adding iso country names and codes
 last_dons_raw9 <- last_dons_raw8 |> 
   mutate(Country_lower = tolower(Country)) |>
+  select(!c(Country)) |> 
   plyr::join(
-    iso %>% mutate(Country_lower = tolower(Country)) |> select(-Country),
+    iso %>% mutate(Country_lower = tolower(Country)),
     by = "Country_lower",
     type = "left",
     match = "all"
