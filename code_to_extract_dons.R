@@ -209,11 +209,13 @@ last_dons_raw1 <- last_dons_raw1 |>
   glimpse()
 
 ## Raw DONs together ##
+## All DONS raw: previous and last update
 last_dons_raw <- last_dons_raw1 |> # Last DONs raw
   select(-c(rowid, Outbreak, Year, Month, Day)) |> 
   bind_rows(prev_dons_raw) |> # Previous DONs raw
   glimpse()
 
+## Last update date
 max_dons_date_last <- gsub(
   x = format(max(as.Date(last_dons_raw1$Date)), 
              format = "%d-%m-%Y"),
@@ -338,24 +340,22 @@ last_dons_raw6 <- last_dons_raw5 |>
 
 ## creating a key to identify unique outbreaks by disease, year, and country
 last_dons_raw7 <- last_dons_raw6 |>
-  mutate(key = paste0(iso3, Year, icd104c)) |>
-  group_by(key) |>
+  group_by(Year, iso3, icd104c) |>
   mutate(DONs = paste(ID, collapse = ", ")) |> # All DONs by outbreak
   ungroup()
 
 #### All DON's (including duplicates if there are multiple diseases of countries reported in one single DON)
-# joining previous DONs 
+# Joining last DONS with previous DONs 
 last_dons_all <- last_dons_raw7 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   rbind(prev_dons_all)
 
 #### Unique cases per country per year ####
-# joining last unique outbreaks with all previous DONs
 last_dons_unique1 <- last_dons_raw7 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
-  distinct(Country, icd104n, Year, .keep_all = TRUE) 
+  distinct(Year, iso3, icd104c, .keep_all = TRUE) 
 
 # Update Country, iso2, and iso3 for Bonaire Sint Eustatius and Saba
 last_dons_unique2 <- last_dons_unique1 |>
@@ -386,7 +386,10 @@ last_dons_unique2 <- last_dons_unique1 |>
 
 last_dons_unique <- last_dons_unique2 |>
   rbind(prev_dons_unique) |>
-  distinct(Country, icd104n, Year, .keep_all = TRUE) # Apply again distinct()! 
+  group_by(Year, iso3, icd104c) |>
+  mutate(DONs = paste(DONs, collapse = ", ")) |> # All DONs by outbreak
+  ungroup() |>
+  distinct(Year, iso3, icd104c, .keep_all = TRUE) # Apply again distinct()! 
 
 ## Save results in 
 save(last_dons_raw, file = paste0("Last update/", "dons_raw_", max_dons_date_last, ".RData"))
