@@ -69,7 +69,7 @@ rm(unsd_class)
 # 2. Insert a new row between the headers and the data
 last_version <- last_version |>
   arrange(desc(Year), iso3, icd104c) |> # Ordering data by Year, iso3, icd104c
-  mutate(id_outbreak = paste0(sprintf("%06d", rev(row_number())))) |> # ID to identify each outbreak Assigning an ID to each report. Oldest one is DON0001
+  mutate(id_outbreak = paste0(Year, iso3, icd104c)) |> # ID to identify each outbreak Assigning an ID to each report.
   glimpse()
   
 last_version <- last_version |>
@@ -77,7 +77,7 @@ last_version <- last_version |>
 
 # 3. Add some HXL hashtags
 ## List all the columns by name and their corresponding HXL hashtag
-cols2hxl <- c(id_outbreak = "#event+id",
+cols2hxl <- c(id_outbreak = "#Year+iso3+icd4",
               Country = "#country+name", 
               iso2 = "#country+code+iso2", 
               iso3 = "#country+code+iso3", 
