@@ -11,7 +11,6 @@ library(clock)
 library(writexl)
 library(tidyverse)
 library(purrr)
-library(mall)
 library(glue)
 
 ## Default Language: English
@@ -228,39 +227,7 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 
 # Extracting disease name, I keep working with the last_dons_raw1, DONs to update
 ## DONs related to multiple diseases?
-prompt_to_multiple_diseases <- glue(
-  "How many diseases are explicitly mentioned in the text? ",
-  "No explanation, return only the number. "
-)
-
 last_dons_raw2 <- last_dons_raw1 |>
-  llm_custom(Outbreak, prompt_to_multiple_diseases, pred_name = "multiple_diseases") |>
-  mutate(multiple_diseases = as.numeric(multiple_diseases)) |>
-  glimpse()
-
-### Confirm that the news refer to more than one disease
-last_dons_raw2 |>
-  filter(multiple_diseases > 1) #### No more than one disease reported in the title of the DONs
-
-# Classifying diseases with llm
-prompt_to_diseases <- glue(
-  "From this list of {length(unique(icd$icd104n))} diseases: ",
-  "{paste(seq_along(unique(icd$icd104n)), unique(icd$icd104n), sep = '. ', collapse = ' ')}, ",
-  "which one most likely corresponds to the disease specified in the following text? ",
-  "No explanation, return only the exact text of the disease as specified in the previous list of {length(unique(icd$icd104n))} diseases, ", # Important to ask for the text, not for the name
-  "Respect the original capitalization and do not add an ending '.', ",
-  "Keep in mind that some disease names in the list contain ', unspecified'."
-)
-
-last_dons_raw3 <- last_dons_raw2 |>
-  select(-multiple_diseases) |>
-  llm_extract(Outbreak, labels = "Name of disease", pred_name = "Disease") |>
-  llm_custom(Disease, prompt_to_diseases, pred_name = "icd104n") |>
-  mutate(icd104n = str_remove(icd104n, "\\.$")) |>
-  glimpse()
-
-# Manual correction
-last_dons_raw4 <- last_dons_raw3 |>
   # seasonal influenza, rhinovirus, RSV, and human metapneumovirus in China
   mutate(repeated_row = ifelse(grepl(Outbreak, pattern = "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere"), 4, 1)) |>
   uncount(repeated_row) |>
@@ -270,7 +237,7 @@ last_dons_raw4 <- last_dons_raw3 |>
     Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 2 ~ "Influenza with other manifestations, seasonal influenza virus identified",
     Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 3 ~ "Respiratory syncytial virus pneumonia",
     Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 4 ~ "Acute bronchitis due to rhinovirus",
-    TRUE ~ icd104n
+    TRUE ~ NA
   )) |>
   # In Congo Influenza A (H1N1, pdm09), rhinoviruses, SARS-COV-2, Human coronaviruses, parainfluenza viruses, and Human Adenovirus
   mutate(repeated_row = ifelse(grepl(Outbreak, pattern = "Undiagnosed disease - Democratic Republic of the Congo"), 6, 1)) |>
@@ -288,9 +255,16 @@ last_dons_raw4 <- last_dons_raw3 |>
   ungroup() |>
   glimpse()
 
+last_dons_raw3 <- last_dons_raw2 |>
+  mutate(icd104n = case_when(
+    Outbreak == "Acute respiratory infections complicated by malaria (previously undiagnosed disease) - Democratic Republic of the Congo" ~ "Plasmodium falciparum malaria, unspecified",
+    grepl(Outbreak, pattern = "Marburg virus disease") ~ "Marburg virus disease",
+    Outbreak == "Oropouche virus disease - Region of the Americas" ~ "Oropouche virus disease",
+    TRUE ~ icd104n
+  )) 
+
 # Merge with icd
-last_dons_raw5 <- last_dons_raw4 |>
-  select(!c(Disease)) |> 
+last_dons_raw4 <- last_dons_raw3 |>
   mutate(icd104n_lower = tolower(icd104n)) |>
   select(!c(icd104n)) |> 
   plyr::join(
@@ -307,44 +281,14 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 
 # Extracting country name #
 ## DONs related to multiple countries?
-prompt_to_multiple_countries <- glue(
-  "How many countries are explicitly mentioned in the text? ",
-  "No explanation, return only the number. "
-)
-
-last_dons_raw6 <- last_dons_raw5 |>
-  llm_custom(Outbreak, prompt_to_multiple_countries, pred_name = "multiple_countries") |>
-  mutate(multiple_countries = as.numeric(multiple_countries)) |>
-  glimpse()
-
-### Confirm that the news refer to more than one country
-last_dons_raw6 |>
-  filter(multiple_countries > 1) #### 
-
-# Classifying diseases with llm
-prompt_to_countries <- glue(
-  "From this list of {length(unique(iso$Country))} countries: ",
-  "{paste(seq_along(unique(iso$Country)), unique(iso$Country), sep = '. ', collapse = ' ')}, ",
-  "which one most likely corresponds to the country specified in the following text? ",
-  "No explanation, return only the exact text of the country as specified in the previous list of {length(unique(iso$Country))} countries, ", # Important to ask for the text, not for the name
-  "Respect the original capitalization and do not add an ending '.', "
-)
-
 # Country names as in ISO
-last_dons_raw7 <- last_dons_raw6 |> 
-  select(-multiple_countries) |>
-  llm_extract(Outbreak, labels = "Name of country", pred_name = "Country") |>
-  llm_custom(Country, prompt_to_countries, pred_name = "Country") |>
-  mutate(Country = str_remove(Country, "\\.$")) |>
-  glimpse()
-
-# Manual correction
-last_dons_raw8 <- last_dons_raw7 |> 
+last_dons_raw5 <- last_dons_raw4 |> 
   # seasonal influenza, rhinovirus, RSV, and human metapneumovirus in China
   mutate(Country = case_when(
     Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" ~ "China",
+    grepl(Outbreak, pattern = "Rwanda") ~ "Rwanda",
     grepl(Outbreak, pattern = "Democratic Republic of the Congo") ~ "Congo Democratic Republic of the",
-    TRUE ~ Country
+    TRUE ~ NA
   )) |>
   # Oropouche virus disease - Region of the Americas
   mutate(repeated_row = ifelse(grepl(Outbreak, pattern = "Oropouche virus disease - Region of the Americas"), 11, 1)) |>
@@ -368,7 +312,7 @@ last_dons_raw8 <- last_dons_raw7 |>
   glimpse()
 
 ## Adding iso country names and codes
-last_dons_raw9 <- last_dons_raw8 |> 
+last_dons_raw6 <- last_dons_raw5 |> 
   mutate(Country_lower = tolower(Country)) |>
   select(!c(Country)) |> 
   plyr::join(
@@ -393,7 +337,7 @@ last_dons_raw9 <- last_dons_raw8 |>
 ## All DONs during this month refer to disease outbreaks
 
 ## creating a key to identify unique outbreaks by disease, year, and country
-last_dons_raw10 <- last_dons_raw9 |>
+last_dons_raw7 <- last_dons_raw6 |>
   mutate(key = paste0(iso3, Year, icd104c)) |>
   group_by(key) |>
   mutate(DONs = paste(ID, collapse = ", ")) |> # All DONs by outbreak
@@ -401,14 +345,14 @@ last_dons_raw10 <- last_dons_raw9 |>
 
 #### All DON's (including duplicates if there are multiple diseases of countries reported in one single DON)
 # joining previous DONs 
-last_dons_all <- last_dons_raw10 |>
+last_dons_all <- last_dons_raw7 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   rbind(prev_dons_all)
 
 #### Unique cases per country per year ####
 # joining last unique outbreaks with all previous DONs
-last_dons_unique1 <- last_dons_raw10 |>
+last_dons_unique1 <- last_dons_raw7 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   distinct()
