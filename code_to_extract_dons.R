@@ -355,7 +355,7 @@ last_dons_all <- last_dons_raw7 |>
 last_dons_unique1 <- last_dons_raw7 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
-  distinct()
+  distinct(Country, icd104n, Year, .keep_all = TRUE) 
 
 # Update Country, iso2, and iso3 for Bonaire Sint Eustatius and Saba
 last_dons_unique2 <- last_dons_unique1 |>
@@ -386,7 +386,7 @@ last_dons_unique2 <- last_dons_unique1 |>
 
 last_dons_unique <- last_dons_unique2 |>
   rbind(prev_dons_unique) |>
-  distinct() # Apply again distinct()! 
+  distinct(Country, icd104n, Year, .keep_all = TRUE) # Apply again distinct()! 
 
 ## Save results in 
 save(last_dons_raw, file = paste0("Last update/", "dons_raw_", max_dons_date_last, ".RData"))
