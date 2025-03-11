@@ -230,43 +230,18 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 # Extracting disease name, I keep working with the last_dons_raw1, DONs to update
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
-  # seasonal influenza, rhinovirus, RSV, and human metapneumovirus in China
-  mutate(repeated_row = ifelse(grepl(Outbreak, pattern = "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere"), 4, 1)) |>
-  uncount(repeated_row) |>
-  group_by(ID) |>
   mutate(icd104n = case_when(
-    Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 1 ~ "Human metapneumovirus pneumonia",
-    Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 2 ~ "Influenza with other manifestations, seasonal influenza virus identified",
-    Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 3 ~ "Respiratory syncytial virus pneumonia",
-    Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" & row_number() == 4 ~ "Acute bronchitis due to rhinovirus",
-    TRUE ~ NA
-  )) |>
-  # In Congo Influenza A (H1N1, pdm09), rhinoviruses, SARS-COV-2, Human coronaviruses, parainfluenza viruses, and Human Adenovirus
-  mutate(repeated_row = ifelse(grepl(Outbreak, pattern = "Undiagnosed disease - Democratic Republic of the Congo"), 6, 1)) |>
-  uncount(repeated_row) |>
-  group_by(ID) |>
-  mutate(icd104n = case_when(
-    Outbreak == "Undiagnosed disease - Democratic Republic of the Congo" & row_number() == 1 ~ "Influenza with other manifestations, seasonal influenza virus identified",
-    Outbreak == "Undiagnosed disease - Democratic Republic of the Congo" & row_number() == 2 ~ "Other viral infections of unspecified site",
-    Outbreak == "Undiagnosed disease - Democratic Republic of the Congo" & row_number() == 3 ~ "Severe acute respiratory syndrome [SARS]",
-    Outbreak == "Undiagnosed disease - Democratic Republic of the Congo" & row_number() == 4 ~ "Coronavirus infection, unspecified site",
-    Outbreak == "Undiagnosed disease - Democratic Republic of the Congo" & row_number() == 5 ~ "Parainfluenza virus pneumonia",
-    Outbreak == "Undiagnosed disease - Democratic Republic of the Congo" & row_number() == 6 ~ "Adenoviral pneumonia",
-    TRUE ~ icd104n
-  )) |>
-  ungroup() |>
-  glimpse()
-
-last_dons_raw3 <- last_dons_raw2 |>
-  mutate(icd104n = case_when(
-    Outbreak == "Acute respiratory infections complicated by malaria (previously undiagnosed disease) - Democratic Republic of the Congo" ~ "Plasmodium falciparum malaria, unspecified",
-    grepl(Outbreak, pattern = "Marburg virus disease") ~ "Marburg virus disease",
-    Outbreak == "Oropouche virus disease - Region of the Americas" ~ "Oropouche virus disease",
-    TRUE ~ icd104n
+    grepl(Outbreak, pattern = "Marburg") ~ "Marburg virus disease",
+    Outbreak == "Chapare haemorrhagic fever- the Plurinational State of Bolivia" ~ "Other arenaviral haemorrhagic fevers",
+    grepl(Outbreak, pattern = "Sudan") ~ "Other specified viral haemorrhagic fevers",
+    grepl(Outbreak, pattern = "Zika") ~ "Zika virus disease"
   )) 
 
+# Cluster of community deaths in Basankusu, Equateur- Democratic Republic of the Congo
+# The definitive cause of illness remains undetermined
+
 # Merge with icd
-last_dons_raw4 <- last_dons_raw3 |>
+last_dons_raw3 <- last_dons_raw2 |>
   mutate(icd104n_lower = tolower(icd104n)) |>
   select(!c(icd104n)) |> 
   plyr::join(
@@ -284,37 +259,20 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Extracting country name #
 ## DONs related to multiple countries?
 # Country names as in ISO
-last_dons_raw5 <- last_dons_raw4 |> 
-  # seasonal influenza, rhinovirus, RSV, and human metapneumovirus in China
+last_dons_raw4 <- last_dons_raw3 |>
   mutate(Country = case_when(
-    Outbreak == "Trends of acute respiratory infection, including human metapneumovirus, in the Northern Hemisphere" ~ "China",
-    grepl(Outbreak, pattern = "Rwanda") ~ "Rwanda",
+    grepl(Outbreak, pattern = "Uganda") ~ "Uganda",
+    grepl(Outbreak, pattern = "Tanzania") ~ "Tanzania United Republic of",
+    grepl(Outbreak, pattern = "India") ~ "India",
+    grepl(Outbreak, pattern = "Bolivia") ~ "Bolivia (Plurinational State of)",
     grepl(Outbreak, pattern = "Democratic Republic of the Congo") ~ "Congo Democratic Republic of the",
     TRUE ~ NA
-  )) |>
-  # Oropouche virus disease - Region of the Americas
-  mutate(repeated_row = ifelse(grepl(Outbreak, pattern = "Oropouche virus disease - Region of the Americas"), 11, 1)) |>
-  uncount(repeated_row) |>
-  group_by(ID) |>
-  mutate(Country = case_when(
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 1 ~ "Bolivia (Plurinational State of)",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 2 ~ "Brazil",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 3 ~ "Canada",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 4 ~ "Cayman Islands",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 5 ~ "Colombia",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 6 ~ "Cuba",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 7 ~ "Ecuador",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 8 ~ "Guyana",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 9 ~ "Panama",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 10 ~ "Peru",
-    Outbreak == "Oropouche virus disease - Region of the Americas" & row_number() == 11 ~ "United States of America",
-    TRUE ~ Country
   )) |>
   ungroup() |>
   glimpse()
 
 ## Adding iso country names and codes
-last_dons_raw6 <- last_dons_raw5 |> 
+last_dons_raw5 <- last_dons_raw4 |> 
   mutate(Country_lower = tolower(Country)) |>
   select(!c(Country)) |> 
   plyr::join(
@@ -337,7 +295,11 @@ last_dons_raw6 <- last_dons_raw5 |>
 
 # Only DONs related to diseases, i.e. deleting those with information on events, rules, recommendations, etc.
 ## All DONs during this month refer to disease outbreaks
-
+# Cluster of community deaths in Basankusu, Equateur- Democratic Republic of the Congo
+# The definitive cause of illness remains undetermined
+last_dons_raw6 <- last_dons_raw5 |>
+  filter(!is.na(icd10c))
+  
 ## creating a key to identify unique outbreaks by disease, year, and country
 last_dons_raw7 <- last_dons_raw6 |>
   group_by(Year, iso3, icd104c) |>
