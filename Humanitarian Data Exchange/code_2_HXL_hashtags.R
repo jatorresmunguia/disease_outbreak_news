@@ -104,4 +104,4 @@ rm(cols2hxl)
 
 # Write Excel file
 write_xlsx(x = list(Data = last_version), path = "data_2_share/disease_outbreaks_HDX.xlsx")
-
+ 
