@@ -231,10 +231,10 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    grepl(Outbreak, pattern = "Marburg") ~ "Marburg virus disease",
-    Outbreak == "Chapare haemorrhagic fever- the Plurinational State of Bolivia" ~ "Other arenaviral haemorrhagic fevers",
-    grepl(Outbreak, pattern = "Sudan") ~ "Other specified viral haemorrhagic fevers",
-    grepl(Outbreak, pattern = "Zika") ~ "Zika virus disease"
+    Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Middle East respiratory syndrome coronavirus [MERS-CoV]",
+    Outbreak == "Marburg virus disease– United Republic of Tanzania" ~ "Marburg virus disease",
+    Outbreak == "Measles - United States of America" ~ "Measles",
+    Outbreak == "Cholera - Angola" ~ "Classical cholera"
   )) 
 
 # Cluster of community deaths in Basankusu, Equateur- Democratic Republic of the Congo
@@ -260,15 +260,12 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
-  mutate(Country = case_when(
-    grepl(Outbreak, pattern = "Uganda") ~ "Uganda",
-    grepl(Outbreak, pattern = "Tanzania") ~ "Tanzania United Republic of",
-    grepl(Outbreak, pattern = "India") ~ "India",
-    grepl(Outbreak, pattern = "Bolivia") ~ "Bolivia (Plurinational State of)",
-    grepl(Outbreak, pattern = "Democratic Republic of the Congo") ~ "Congo Democratic Republic of the",
-    TRUE ~ NA
-  )) |>
-  ungroup() |>
+    mutate(Country = case_when(
+      Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Saudi Arabia",
+      Outbreak == "Marburg virus disease– United Republic of Tanzania" ~ "Tanzania United Republic of",
+      Outbreak == "Measles - United States of America" ~ "United States of America",
+      Outbreak == "Cholera - Angola" ~ "Angola"
+      )) |>
   glimpse()
 
 ## Adding iso country names and codes
