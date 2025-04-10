@@ -48,7 +48,7 @@ can contact me via [GitHub](https://github.com/jatorresmunguia),
 [X](https://x.com/jtorresmunguia), or
 [here](https://juan-torresmunguia.netlify.app/contact/).
 
-The last version of the dataset was updated on 08/03/2025 and contains
-information on 3163 **outbreaks**, associated with 91 infectious
-diseases that occurred from 01/01/1996 to 08/03/2025 in 236 countries
+The last version of the dataset was updated on 28/03/2025 and contains
+information on 3171 **outbreaks**, associated with 91 infectious
+diseases that occurred from 01/01/1996 to 28/03/2025 in 236 countries
 and territories worldwide.
