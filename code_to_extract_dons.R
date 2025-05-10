@@ -231,14 +231,11 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Middle East respiratory syndrome coronavirus [MERS-CoV]",
-    Outbreak == "Marburg virus disease– United Republic of Tanzania" ~ "Marburg virus disease",
-    Outbreak == "Measles - United States of America" ~ "Measles",
-    Outbreak == "Cholera - Angola" ~ "Classical cholera"
+    Outbreak == "Measles – Region of the Americas" ~ "Measles",
+    Outbreak == "Sudan virus disease - Uganda" ~ "Other specified viral haemorrhagic fevers",
+    Outbreak == "Avian Influenza A(H5N1) - Mexico" ~ "Influenza due to identified zoonotic or pandemic influenza virus",
+    Outbreak == "Invasive meningococcal disease - Kingdom of Saudi Arabia" ~ "Meningococcal meningitis"
   )) 
-
-# Cluster of community deaths in Basankusu, Equateur- Democratic Republic of the Congo
-# The definitive cause of illness remains undetermined
 
 # Merge with icd
 last_dons_raw3 <- last_dons_raw2 |>
@@ -261,11 +258,24 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
     mutate(Country = case_when(
-      Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Saudi Arabia",
-      Outbreak == "Marburg virus disease– United Republic of Tanzania" ~ "Tanzania United Republic of",
-      Outbreak == "Measles - United States of America" ~ "United States of America",
-      Outbreak == "Cholera - Angola" ~ "Angola"
-      )) |>
+      Outbreak == "Sudan virus disease - Uganda" ~ "Uganda",
+      Outbreak == "Avian Influenza A(H5N1) - Mexico" ~ "Mexico",
+      Outbreak == "Invasive meningococcal disease - Kingdom of Saudi Arabia" ~ "Saudi Arabia"
+    )) |>
+  mutate(repeated_row = case_when(
+    Outbreak == "Measles – Region of the Americas" ~ 6,
+                                  TRUE ~ 1)) |>
+  uncount(repeated_row) |>
+  group_by(ID) |>
+  mutate(Country = case_when(
+    Outbreak == "Measles – Region of the Americas" & row_number() == 1 ~ "Argentina",
+    Outbreak == "Measles – Region of the Americas" & row_number() == 2 ~ "Belize",
+    Outbreak == "Measles – Region of the Americas" & row_number() == 3 ~ "Brazil",
+    Outbreak == "Measles – Region of the Americas" & row_number() == 4 ~ "Canada",
+    Outbreak == "Measles – Region of the Americas" & row_number() == 5 ~ "Mexico",
+    Outbreak == "Measles – Region of the Americas" & row_number() == 6 ~ "United States of America",
+    TRUE ~ Country
+  )) |>
   glimpse()
 
 ## Adding iso country names and codes
