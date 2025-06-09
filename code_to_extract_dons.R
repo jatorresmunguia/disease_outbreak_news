@@ -49,7 +49,8 @@ data <- data.frame("Outbreak" = NA,
                    "Description" = NA,
                    "Link" = NA)
 
-rD <- rsDriver(browser = "firefox", port = 2511L,  # between 0 and 65535
+rD <- rsDriver(browser = "firefox", port = 1806L,  # between 0 and 65535
+               phantomver = NULL,
                chromever = NULL)
 
 remDr <- rD[["client"]]
@@ -231,10 +232,12 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Measles – Region of the Americas" ~ "Measles",
-    Outbreak == "Sudan virus disease - Uganda" ~ "Other specified viral haemorrhagic fevers",
-    Outbreak == "Avian Influenza A(H5N1) - Mexico" ~ "Influenza due to identified zoonotic or pandemic influenza virus",
-    Outbreak == "Invasive meningococcal disease - Kingdom of Saudi Arabia" ~ "Meningococcal meningitis"
+    Outbreak == "Anthrax - Thailand" ~ "Cutaneous anthrax",
+    Outbreak == "Circulating vaccine-derived poliovirus type 2 (cVDPV2) - Papua New Guinea" ~ "Acute poliomyelitis, unspecified",
+    Outbreak == "Yellow fever - Region of the Americas" ~ "Yellow fever, unspecified",
+    Outbreak == "Measles - Morocco" ~ "Measles",
+    Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Middle East respiratory syndrome coronavirus [MERS-CoV]",
+    Outbreak == "Chikungunya - La Réunion and Mayotte" ~ "Chikungunya virus disease"
   )) 
 
 # Merge with icd
@@ -258,22 +261,35 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
     mutate(Country = case_when(
-      Outbreak == "Sudan virus disease - Uganda" ~ "Uganda",
-      Outbreak == "Avian Influenza A(H5N1) - Mexico" ~ "Mexico",
-      Outbreak == "Invasive meningococcal disease - Kingdom of Saudi Arabia" ~ "Saudi Arabia"
-    )) |>
+      Outbreak == "Anthrax - Thailand" ~ "Thailand",
+      Outbreak == "Circulating vaccine-derived poliovirus type 2 (cVDPV2) - Papua New Guinea" ~ "Papua New Guinea",
+      Outbreak == "Measles - Morocco" ~ "Morocco",
+      Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Saudi Arabia",
+      Outbreak == "Chikungunya - La Réunion and Mayotte" ~ "Chikungunya virus disease"
+      )) |>
+  
   mutate(repeated_row = case_when(
-    Outbreak == "Measles – Region of the Americas" ~ 6,
+    Outbreak == "Chikungunya - La Réunion and Mayotte" ~ 2,
+    TRUE ~ 1)) |>
+  uncount(repeated_row) |>
+  group_by(ID) |>
+  mutate(Country = case_when(
+    Outbreak == "Chikungunya - La Réunion and Mayotte" & row_number() == 1 ~ "Réunion",
+    Outbreak == "Chikungunya - La Réunion and Mayotte" & row_number() == 2 ~ "Mayotte",
+    TRUE ~ Country
+  )) |>
+  
+  mutate(repeated_row = case_when(
+    Outbreak == "Yellow fever - Region of the Americas" ~ 5, 
                                   TRUE ~ 1)) |>
   uncount(repeated_row) |>
   group_by(ID) |>
   mutate(Country = case_when(
-    Outbreak == "Measles – Region of the Americas" & row_number() == 1 ~ "Argentina",
-    Outbreak == "Measles – Region of the Americas" & row_number() == 2 ~ "Belize",
-    Outbreak == "Measles – Region of the Americas" & row_number() == 3 ~ "Brazil",
-    Outbreak == "Measles – Region of the Americas" & row_number() == 4 ~ "Canada",
-    Outbreak == "Measles – Region of the Americas" & row_number() == 5 ~ "Mexico",
-    Outbreak == "Measles – Region of the Americas" & row_number() == 6 ~ "United States of America",
+    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 1 ~ "Bolivia (Plurinational State of)",
+    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 2 ~ "Brazil",
+    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 3 ~ "Colombia",
+    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 4 ~ "Ecuador",
+    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 5 ~ "Peru",
     TRUE ~ Country
   )) |>
   glimpse()
