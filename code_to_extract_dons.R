@@ -232,12 +232,7 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Anthrax - Thailand" ~ "Cutaneous anthrax",
-    Outbreak == "Circulating vaccine-derived poliovirus type 2 (cVDPV2) - Papua New Guinea" ~ "Acute poliomyelitis, unspecified",
-    Outbreak == "Yellow fever - Region of the Americas" ~ "Yellow fever, unspecified",
-    Outbreak == "Measles - Morocco" ~ "Measles",
-    Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Middle East respiratory syndrome coronavirus [MERS-CoV]",
-    Outbreak == "Chikungunya - La Réunion and Mayotte" ~ "Chikungunya virus disease"
+    Outbreak == "Avian Influenza A(H5N1) - Cambodia" ~ "Influenza due to identified zoonotic or pandemic influenza virus"
   )) 
 
 # Merge with icd
@@ -261,37 +256,8 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
     mutate(Country = case_when(
-      Outbreak == "Anthrax - Thailand" ~ "Thailand",
-      Outbreak == "Circulating vaccine-derived poliovirus type 2 (cVDPV2) - Papua New Guinea" ~ "Papua New Guinea",
-      Outbreak == "Measles - Morocco" ~ "Morocco",
-      Outbreak == "Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia" ~ "Saudi Arabia",
-      Outbreak == "Chikungunya - La Réunion and Mayotte" ~ "Chikungunya virus disease"
+      Outbreak == "Avian Influenza A(H5N1) - Cambodia" ~ "Cambodia"
       )) |>
-  
-  mutate(repeated_row = case_when(
-    Outbreak == "Chikungunya - La Réunion and Mayotte" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(ID) |>
-  mutate(Country = case_when(
-    Outbreak == "Chikungunya - La Réunion and Mayotte" & row_number() == 1 ~ "Réunion",
-    Outbreak == "Chikungunya - La Réunion and Mayotte" & row_number() == 2 ~ "Mayotte",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(repeated_row = case_when(
-    Outbreak == "Yellow fever - Region of the Americas" ~ 5, 
-                                  TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(ID) |>
-  mutate(Country = case_when(
-    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 1 ~ "Bolivia (Plurinational State of)",
-    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 2 ~ "Brazil",
-    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 3 ~ "Colombia",
-    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 4 ~ "Ecuador",
-    Outbreak == "Yellow fever - Region of the Americas" & row_number() == 5 ~ "Peru",
-    TRUE ~ Country
-  )) |>
   glimpse()
 
 ## Adding iso country names and codes
