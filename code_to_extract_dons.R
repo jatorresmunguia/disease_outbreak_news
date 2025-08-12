@@ -49,7 +49,7 @@ data <- data.frame("Outbreak" = NA,
                    "Description" = NA,
                    "Link" = NA)
 
-rD <- rsDriver(browser = "firefox", port = 1806L,  # between 0 and 65535
+rD <- rsDriver(browser = "firefox", port = 1808L,  # between 0 and 65535
                phantomver = NULL,
                chromever = NULL)
 
@@ -232,8 +232,9 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Avian Influenza A(H5N1) - Cambodia" ~ "Influenza due to identified zoonotic or pandemic influenza virus"
-  )) 
+    Outbreak == "Rabies - Timor-Leste" ~ "Rabies, unspecified",
+    Outbreak == "Nipah virus infection - India" ~ "Other viral infections of unspecified site"
+    )) 
 
 # Merge with icd
 last_dons_raw3 <- last_dons_raw2 |>
@@ -256,8 +257,9 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
     mutate(Country = case_when(
-      Outbreak == "Avian Influenza A(H5N1) - Cambodia" ~ "Cambodia"
-      )) |>
+      Outbreak == "Rabies - Timor-Leste" ~ "Timor-Leste",
+      Outbreak == "Nipah virus infection - India" ~ "India"
+    )) |>
   glimpse()
 
 ## Adding iso country names and codes
