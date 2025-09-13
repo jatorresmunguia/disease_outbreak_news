@@ -232,8 +232,9 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Rabies - Timor-Leste" ~ "Rabies, unspecified",
-    Outbreak == "Nipah virus infection - India" ~ "Other viral infections of unspecified site"
+    Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Ebola virus disease",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" ~ "Classical cholera",
+    Outbreak == "Circulating vaccine-derived poliovirus type 1 - Israel" ~ "Acute poliomyelitis, unspecified"
     )) 
 
 # Merge with icd
@@ -256,10 +257,49 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
-    mutate(Country = case_when(
-      Outbreak == "Rabies - Timor-Leste" ~ "Timor-Leste",
-      Outbreak == "Nipah virus infection - India" ~ "India"
-    )) |>
+  mutate(Country = case_when(
+    Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Congo Democratic Republic of the",
+    Outbreak == "Circulating vaccine-derived poliovirus type 1 - Israel" ~ "Israel"
+  )) |>
+  mutate(repeated_row = case_when(
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" ~ 31,
+    TRUE ~ 1)) |>
+  uncount(repeated_row) |>
+  group_by(ID) |>
+  mutate(Country = case_when(
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 1 ~ "Angola",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 2 ~ "Burundi",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 3 ~ "Chad",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 4 ~ "Congo",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 5 ~ "Côte d'Ivoire",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 6 ~ "Congo Democratic Republic of the",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 7 ~ "Ethiopia",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 8 ~ "Ghana",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 9 ~ "Kenya",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 10 ~ "Malawi",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 11 ~ "Mozambique",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 12 ~ "Namibia",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 13 ~ "Nigeria",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 14 ~ "Rwanda",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 15 ~ "South Sudan",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 16 ~ "Togo",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 17 ~ "Uganda",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 18 ~ "Tanzania United Republic of",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 19 ~ "Zambia",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 20 ~ "Zimbabwe",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 21 ~ "Afghanistan",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 22 ~ "Pakistan",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 23 ~ "Somalia",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 24 ~ "Sudan",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 25 ~ "Yemen",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 26 ~ "Haiti",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 27 ~ "Bangladesh",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 28 ~ "India",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 29 ~ "Myanmar",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 30 ~ "Nepal",
+    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 31 ~ "Thailand",
+    TRUE ~ Country
+  )) |>
   glimpse()
 
 ## Adding iso country names and codes
