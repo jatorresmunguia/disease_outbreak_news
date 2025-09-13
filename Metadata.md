@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Metadata 
 
 The compiled database contains datasets and code in R language. Following the Fields of Research metadata schema from Figshare, the following files can be found in the repository:
