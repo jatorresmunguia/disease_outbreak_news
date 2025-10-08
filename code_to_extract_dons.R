@@ -232,9 +232,8 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Ebola virus disease",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" ~ "Classical cholera",
-    Outbreak == "Circulating vaccine-derived poliovirus type 1 - Israel" ~ "Acute poliomyelitis, unspecified"
+    Outbreak == "Nipah virus infection - Bangladesh" ~ "Other viral infections of unspecified site",
+    Outbreak == "Chikungunya virus disease- Global situation" ~ "Chikungunya virus disease"
     )) 
 
 # Merge with icd
@@ -258,46 +257,51 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
   mutate(Country = case_when(
-    Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Congo Democratic Republic of the",
-    Outbreak == "Circulating vaccine-derived poliovirus type 1 - Israel" ~ "Israel"
+    Outbreak == "Nipah virus infection - Bangladesh" ~ "Bangladesh"
   )) |>
   mutate(repeated_row = case_when(
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" ~ 31,
+    Outbreak == "Chikungunya virus disease- Global situation" ~ 38,
     TRUE ~ 1)) |>
   uncount(repeated_row) |>
-  group_by(ID) |>
   mutate(Country = case_when(
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 1 ~ "Angola",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 2 ~ "Burundi",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 3 ~ "Chad",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 4 ~ "Congo",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 5 ~ "Côte d'Ivoire",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 6 ~ "Congo Democratic Republic of the",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 7 ~ "Ethiopia",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 8 ~ "Ghana",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 9 ~ "Kenya",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 10 ~ "Malawi",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 11 ~ "Mozambique",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 12 ~ "Namibia",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 13 ~ "Nigeria",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 14 ~ "Rwanda",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 15 ~ "South Sudan",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 16 ~ "Togo",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 17 ~ "Uganda",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 18 ~ "Tanzania United Republic of",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 19 ~ "Zambia",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 20 ~ "Zimbabwe",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 21 ~ "Afghanistan",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 22 ~ "Pakistan",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 23 ~ "Somalia",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 24 ~ "Sudan",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 25 ~ "Yemen",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 26 ~ "Haiti",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 27 ~ "Bangladesh",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 28 ~ "India",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 29 ~ "Myanmar",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 30 ~ "Nepal",
-    Outbreak == "Cholera – Multi-country with a focus on countries experiencing current surges" & row_number() == 31 ~ "Thailand",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 1 ~ "United States of America",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 2 ~ "Canada",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 3 ~ "Belize",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 4 ~ "Bahamas",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 5 ~ "Antigua and Barbuda",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 6 ~ "Grenada",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 7 ~ "Costa Rica",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 8 ~ "Panama",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 9 ~ "Haiti",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 10 ~ "Trinidad and Tobago",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 11 ~ "Ecuador",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 12 ~ "Colombia",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 13 ~ "Bolivia (Plurinational State of)",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 14 ~ "Chile",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 15 ~ "Paraguay",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 16 ~ "Pakistan",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 17 ~ "India",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 18 ~ "Bangladesh",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 19 ~ "Thailand",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 20 ~ "Sri Lanka",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 21 ~ "Malaysia",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 22 ~ "Philippines",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 23 ~ "China",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 24 ~ "Singapore",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 25 ~ "Korea Republic of",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 26 ~ "Japan",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 27 ~ "Indonesia",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 28 ~ "Mayotte",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 29 ~ "New Caledonia",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 30 ~ "Australia",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 31 ~ "France",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 32 ~ "Italy",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 33 ~ "Kenya",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 34 ~ "Somalia",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 35 ~ "Comoros",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 36 ~ "Mauritius",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 37 ~ "Réunion",
+    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 38 ~ "Senegal",
     TRUE ~ Country
   )) |>
   glimpse()
