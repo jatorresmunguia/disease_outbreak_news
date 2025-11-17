@@ -1,9 +1,9 @@
 ---
 title: 'README'
 output: 
+  pdf_document:
   md_document:
     variant: markdown_github
-  pdf_document:
 ---
 
 ```{r load_data, include=FALSE, message=FALSE, warning=FALSE}
