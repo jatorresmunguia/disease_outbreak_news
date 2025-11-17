@@ -232,8 +232,7 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Nipah virus infection - Bangladesh" ~ "Other viral infections of unspecified site",
-    Outbreak == "Chikungunya virus disease- Global situation" ~ "Chikungunya virus disease"
+    Outbreak == "Rift Valley fever- Mauritania and Senegal" ~ "Rift Valley fever"
     )) 
 
 # Merge with icd
@@ -256,53 +255,13 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
-  mutate(Country = case_when(
-    Outbreak == "Nipah virus infection - Bangladesh" ~ "Bangladesh"
-  )) |>
   mutate(repeated_row = case_when(
-    Outbreak == "Chikungunya virus disease- Global situation" ~ 38,
+    Outbreak == "Rift Valley fever- Mauritania and Senegal" ~ 2,
     TRUE ~ 1)) |>
   uncount(repeated_row) |>
   mutate(Country = case_when(
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 1 ~ "United States of America",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 2 ~ "Canada",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 3 ~ "Belize",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 4 ~ "Bahamas",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 5 ~ "Antigua and Barbuda",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 6 ~ "Grenada",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 7 ~ "Costa Rica",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 8 ~ "Panama",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 9 ~ "Haiti",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 10 ~ "Trinidad and Tobago",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 11 ~ "Ecuador",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 12 ~ "Colombia",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 13 ~ "Bolivia (Plurinational State of)",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 14 ~ "Chile",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 15 ~ "Paraguay",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 16 ~ "Pakistan",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 17 ~ "India",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 18 ~ "Bangladesh",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 19 ~ "Thailand",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 20 ~ "Sri Lanka",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 21 ~ "Malaysia",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 22 ~ "Philippines",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 23 ~ "China",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 24 ~ "Singapore",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 25 ~ "Korea Republic of",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 26 ~ "Japan",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 27 ~ "Indonesia",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 28 ~ "Mayotte",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 29 ~ "New Caledonia",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 30 ~ "Australia",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 31 ~ "France",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 32 ~ "Italy",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 33 ~ "Kenya",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 34 ~ "Somalia",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 35 ~ "Comoros",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 36 ~ "Mauritius",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 37 ~ "Réunion",
-    Outbreak == "Chikungunya virus disease- Global situation" & row_number() == 38 ~ "Senegal",
-    TRUE ~ Country
+    Outbreak == "Rift Valley fever- Mauritania and Senegal" & row_number() == 1 ~ "Mauritania",
+    Outbreak == "Rift Valley fever- Mauritania and Senegal" & row_number() == 2 ~ "Senegal"
   )) |>
   glimpse()
 
