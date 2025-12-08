@@ -232,7 +232,11 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Rift Valley fever- Mauritania and Senegal" ~ "Rift Valley fever"
+    Outbreak == "Avian Influenza A(H5N5) - United States of America" ~ "Influenza due to identified zoonotic or pandemic influenza virus",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" ~ "Monkeypox",
+    Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Ebola virus disease",
+    Outbreak == "Diphtheria - African Region (AFRO)" ~ "Diphtheria, unspecified",
+    Outbreak == "Marburg virus disease - Ethiopia" ~ "Marburg virus disease"
     )) 
 
 # Merge with icd
@@ -255,18 +259,83 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
+  mutate(Country = case_when(
+        Outbreak == "Avian Influenza A(H5N5) - United States of America" ~ "United States of America",
+        Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Congo Democratic Republic of the",
+        Outbreak == "Marburg virus disease - Ethiopia" ~ "Ethiopia"
+        )
+      ) |>
+  glimpse()
+
+last_dons_raw5 <- last_dons_raw4 |>
   mutate(repeated_row = case_when(
-    Outbreak == "Rift Valley fever- Mauritania and Senegal" ~ 2,
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" ~ 35,
     TRUE ~ 1)) |>
   uncount(repeated_row) |>
+  group_by(Outbreak) |>
   mutate(Country = case_when(
-    Outbreak == "Rift Valley fever- Mauritania and Senegal" & row_number() == 1 ~ "Mauritania",
-    Outbreak == "Rift Valley fever- Mauritania and Senegal" & row_number() == 2 ~ "Senegal"
-  )) |>
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 1  ~ "Burundi",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 2  ~ "Congo Democratic Republic of the",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 3  ~ "Kenya",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 4  ~ "Malawi",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 5  ~ "Mozambique",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 6  ~ "Congo",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 7  ~ "Rwanda",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 8  ~ "South Africa",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 9  ~ "Tanzania United Republic of",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 10 ~ "Uganda",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 11 ~ "Zambia",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 12 ~ "Namibia",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 13 ~ "Canada",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 14 ~ "United States of America",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 15 ~ "Thailand",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 16 ~ "United Arab Emirates",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 17 ~ "Oman",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 18 ~ "Russian Federation",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 19 ~ "Egypt",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 20 ~ "Lebanon",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 21 ~ "Qatar",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 22 ~ "Italy",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 23 ~ "Netherlands",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 24 ~ "Portugal",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 25 ~ "Spain",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 26 ~ "Belgium",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 27 ~ "United Kingdom of Great Britain and Northern Ireland",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 28 ~ "France",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 29 ~ "Germany",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 30 ~ "Greece",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 31 ~ "Ireland",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 32 ~ "Australia",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 33 ~ "Japan",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 34 ~ "Malaysia",
+    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 35 ~ "China",
+    TRUE ~ Country
+  )
+  ) |>
+  glimpse()
+
+last_dons_raw6 <- last_dons_raw5 |>
+  mutate(repeated_row = case_when(
+    Outbreak == "Diphtheria - African Region (AFRO)" ~ 8,
+    TRUE ~ 1)) |>
+  uncount(repeated_row) |>
+  group_by(Outbreak) |>
+  mutate(Country = case_when(
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 1  ~ "Algeria",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 2  ~ "Chad",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 3  ~ "Guinea",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 4  ~ "Mali",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 5  ~ "Mauritania",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 6  ~ "Niger",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 7  ~ "Nigeria",
+    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 8  ~ "South Africa",
+    TRUE ~ Country
+    )
+  ) |>
   glimpse()
 
 ## Adding iso country names and codes
-last_dons_raw5 <- last_dons_raw4 |> 
+last_dons_raw7 <- last_dons_raw6 |> 
   mutate(Country_lower = tolower(Country)) |>
   select(!c(Country)) |> 
   plyr::join(
@@ -291,24 +360,24 @@ last_dons_raw5 <- last_dons_raw4 |>
 ## All DONs during this month refer to disease outbreaks
 # Cluster of community deaths in Basankusu, Equateur- Democratic Republic of the Congo
 # The definitive cause of illness remains undetermined
-last_dons_raw6 <- last_dons_raw5 |>
+last_dons_raw8 <- last_dons_raw7 |>
   filter(!is.na(icd10c))
   
 ## creating a key to identify unique outbreaks by disease, year, and country
-last_dons_raw7 <- last_dons_raw6 |>
+last_dons_raw9 <- last_dons_raw8 |>
   group_by(Year, iso3, icd104c) |>
   mutate(DONs = paste(ID, collapse = ", ")) |> # All DONs by outbreak
   ungroup()
 
 #### All DON's (including duplicates if there are multiple diseases of countries reported in one single DON)
 # Joining last DONS with previous DONs 
-last_dons_all <- last_dons_raw7 |>
+last_dons_all <- last_dons_raw9 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   rbind(prev_dons_all)
 
 #### Unique cases per country per year ####
-last_dons_unique1 <- last_dons_raw7 |>
+last_dons_unique1 <- last_dons_raw9 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   distinct(Year, iso3, icd104c, .keep_all = TRUE) 
