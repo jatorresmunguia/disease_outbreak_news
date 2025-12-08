@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 ### **A global dataset of pandemic- and epidemic-prone disease outbreaks**
 
 ### **Torres Munguía, J.A.; Badarau, F.C.; Díaz Pavez, L.R.; Martínez-Zarzoso, I.; & Wacker, Konstantin M.**
