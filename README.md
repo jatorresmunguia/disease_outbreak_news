@@ -42,7 +42,7 @@ here!](https://figshare.com/articles/dataset/A_global_dataset_of_pandemic-_and_e
 
 #### IMPORTANT NOTE
 
-From October 2024, this project is being updated by Dr. Juan Armando
+From October 2024, this project is being updated by Dr. Juan Armando
 Torres Munguía. In case of questions, requests, or collaborations, you
 can contact me via [GitHub](https://github.com/jatorresmunguia),
 [X](https://x.com/jtorresmunguia), or
