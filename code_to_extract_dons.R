@@ -232,11 +232,8 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Avian Influenza A(H5N5) - United States of America" ~ "Influenza due to identified zoonotic or pandemic influenza virus",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" ~ "Monkeypox",
-    Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Ebola virus disease",
-    Outbreak == "Diphtheria - African Region (AFRO)" ~ "Diphtheria, unspecified",
-    Outbreak == "Marburg virus disease - Ethiopia" ~ "Marburg virus disease"
+    Outbreak == "Middle East respiratory syndrome coronavirus - Global update" ~ "Middle East respiratory syndrome coronavirus [MERS-CoV]",
+    Outbreak == "Seasonal influenza - Global situation" ~ "Influenza due to identified zoonotic or pandemic influenza virus"
     )) 
 
 # Merge with icd
@@ -259,83 +256,154 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
-  mutate(Country = case_when(
-        Outbreak == "Avian Influenza A(H5N5) - United States of America" ~ "United States of America",
-        Outbreak == "Ebola virus disease - Democratic Republic of the Congo" ~ "Congo Democratic Republic of the",
-        Outbreak == "Marburg virus disease - Ethiopia" ~ "Ethiopia"
-        )
-      ) |>
-  glimpse()
-
-last_dons_raw5 <- last_dons_raw4 |>
   mutate(repeated_row = case_when(
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" ~ 35,
+    Outbreak == "Middle East respiratory syndrome coronavirus - Global update" ~ 2,
     TRUE ~ 1)) |>
   uncount(repeated_row) |>
   group_by(Outbreak) |>
   mutate(Country = case_when(
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 1  ~ "Burundi",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 2  ~ "Congo Democratic Republic of the",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 3  ~ "Kenya",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 4  ~ "Malawi",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 5  ~ "Mozambique",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 6  ~ "Congo",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 7  ~ "Rwanda",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 8  ~ "South Africa",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 9  ~ "Tanzania United Republic of",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 10 ~ "Uganda",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 11 ~ "Zambia",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 12 ~ "Namibia",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 13 ~ "Canada",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 14 ~ "United States of America",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 15 ~ "Thailand",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 16 ~ "United Arab Emirates",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 17 ~ "Oman",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 18 ~ "Russian Federation",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 19 ~ "Egypt",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 20 ~ "Lebanon",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 21 ~ "Qatar",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 22 ~ "Italy",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 23 ~ "Netherlands",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 24 ~ "Portugal",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 25 ~ "Spain",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 26 ~ "Belgium",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 27 ~ "United Kingdom of Great Britain and Northern Ireland",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 28 ~ "France",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 29 ~ "Germany",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 30 ~ "Greece",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 31 ~ "Ireland",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 32 ~ "Australia",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 33 ~ "Japan",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 34 ~ "Malaysia",
-    Outbreak == "Broader transmission of mpox due to clade Ib MPXV – Global situation" & row_number() == 35 ~ "China",
-    TRUE ~ Country
+    Outbreak == "Middle East respiratory syndrome coronavirus - Global update" & row_number() == 1  ~ "Saudi Arabia",
+    Outbreak == "Middle East respiratory syndrome coronavirus - Global update" & row_number() == 2  ~ "France",
+    TRUE ~ NA
   )
   ) |>
   glimpse()
 
-last_dons_raw6 <- last_dons_raw5 |>
+last_dons_raw5 <- last_dons_raw4 |>
   mutate(repeated_row = case_when(
-    Outbreak == "Diphtheria - African Region (AFRO)" ~ 8,
-    TRUE ~ 1)) |>
+    Outbreak == "Seasonal influenza - Global situation" ~ 121,
+    TRUE ~ 1
+  )) |>
   uncount(repeated_row) |>
   group_by(Outbreak) |>
   mutate(Country = case_when(
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 1  ~ "Algeria",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 2  ~ "Chad",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 3  ~ "Guinea",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 4  ~ "Mali",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 5  ~ "Mauritania",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 6  ~ "Niger",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 7  ~ "Nigeria",
-    Outbreak == "Diphtheria - African Region (AFRO)" & row_number() == 8  ~ "South Africa",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 1  ~ "Afghanistan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 2  ~ "Albania",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 3  ~ "Algeria",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 4  ~ "Argentina",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 5  ~ "Armenia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 6  ~ "Australia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 7  ~ "Austria",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 8  ~ "Azerbaijan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 9  ~ "Bangladesh",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 10 ~ "Belarus",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 11 ~ "Belgium",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 12 ~ "Bhutan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 13 ~ "Bolivia (Plurinational State of)",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 14 ~ "Brazil",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 15 ~ "Brunei Darussalam",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 16 ~ "Côte d'Ivoire",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 17 ~ "Cambodia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 18 ~ "Cameroon",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 19 ~ "Chile",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 20 ~ "Hong Kong",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 21 ~ "Colombia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 22 ~ "Cook Islands",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 23 ~ "Costa Rica",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 24 ~ "Croatia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 25 ~ "Czechia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 26 ~ "Korea (Democratic People's Republic of)",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 27 ~ "Denmark",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 28 ~ "Dominican Republic",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 29 ~ "Estonia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 30 ~ "Ethiopia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 31 ~ "Fiji",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 32 ~ "Finland",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 33 ~ "France",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 34 ~ "French Polynesia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 35 ~ "Gabon",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 36 ~ "Georgia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 37 ~ "Greece",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 38 ~ "Guam",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 39 ~ "Guatemala",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 40 ~ "Guinea",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 41 ~ "Guyana",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 42 ~ "Honduras",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 43 ~ "Hungary",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 44 ~ "Iceland",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 45 ~ "Indonesia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 46 ~ "Iraq",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 47 ~ "Ireland",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 48 ~ "Israel",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 49 ~ "Italy",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 50 ~ "Kazakhstan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 51 ~ "Kiribati",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 52 ~ "Kosovo",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 53 ~ "Kuwait",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 54 ~ "Kyrgyzstan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 55 ~ "Lao People's Democratic Republic",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 56 ~ "Latvia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 57 ~ "Lebanon",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 58 ~ "Libya",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 59 ~ "Lithuania",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 60 ~ "Luxembourg",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 61 ~ "Madagascar",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 62 ~ "Maldives",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 63 ~ "Malta",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 64 ~ "Marshall Islands",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 65 ~ "Mexico",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 66 ~ "Micronesia (Federated States of)",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 67 ~ "Montenegro",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 68 ~ "Morocco",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 69 ~ "Mozambique",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 70 ~ "Nauru",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 71 ~ "Nepal",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 72 ~ "Netherlands",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 73 ~ "New Caledonia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 74 ~ "Niger",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 75 ~ "Nigeria",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 76 ~ "Niue",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 77 ~ "North Macedonia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 78 ~ "Northern Mariana Islands",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 79 ~ "Norway",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 80 ~ "Oman",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 81 ~ "Palau",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 82 ~ "Panama",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 83 ~ "Paraguay",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 84 ~ "Peru",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 85 ~ "Poland",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 86 ~ "Qatar",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 87 ~ "Moldova Republic of",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 88 ~ "Romania",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 89 ~ "Russian Federation",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 90 ~ "Saint Lucia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 91 ~ "Samoa",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 92 ~ "Saudi Arabia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 93 ~ "Senegal",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 94 ~ "Serbia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 95 ~ "Singapore",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 96 ~ "Slovakia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 97 ~ "Slovenia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 98 ~ "Solomon Islands",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 99 ~ "Somalia",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 100 ~ "South Africa",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 101 ~ "Spain",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 102 ~ "Sri Lanka",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 103 ~ "Sudan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 104 ~ "Suriname",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 105 ~ "Switzerland",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 106 ~ "Turkey",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 107 ~ "Thailand",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 108 ~ "Togo",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 109 ~ "Tokelau",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 110 ~ "Tonga",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 111 ~ "Tuvalu",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 112 ~ "Ukraine",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 113 ~ "United Arab Emirates",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 114 ~ "United Kingdom of Great Britain and Northern Ireland",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 115 ~ "United States of America",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 116 ~ "Uzbekistan",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 117 ~ "Vanuatu",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 118 ~ "Viet Nam",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 119 ~ "Wallis and Futuna",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 120 ~ "Yemen",
+    Outbreak == "Seasonal influenza - Global situation" & row_number() == 121 ~ "Zambia",
     TRUE ~ Country
-    )
-  ) |>
-  glimpse()
+  )) |>
+  ungroup()
 
 ## Adding iso country names and codes
-last_dons_raw7 <- last_dons_raw6 |> 
+last_dons_raw6 <- last_dons_raw5 |> 
   mutate(Country_lower = tolower(Country)) |>
   select(!c(Country)) |> 
   plyr::join(
@@ -360,24 +428,24 @@ last_dons_raw7 <- last_dons_raw6 |>
 ## All DONs during this month refer to disease outbreaks
 # Cluster of community deaths in Basankusu, Equateur- Democratic Republic of the Congo
 # The definitive cause of illness remains undetermined
-last_dons_raw8 <- last_dons_raw7 |>
+last_dons_raw7 <- last_dons_raw6 |>
   filter(!is.na(icd10c))
   
 ## creating a key to identify unique outbreaks by disease, year, and country
-last_dons_raw9 <- last_dons_raw8 |>
+last_dons_raw8 <- last_dons_raw7 |>
   group_by(Year, iso3, icd104c) |>
   mutate(DONs = paste(ID, collapse = ", ")) |> # All DONs by outbreak
   ungroup()
 
 #### All DON's (including duplicates if there are multiple diseases of countries reported in one single DON)
 # Joining last DONS with previous DONs 
-last_dons_all <- last_dons_raw9 |>
+last_dons_all <- last_dons_raw8 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   rbind(prev_dons_all)
 
 #### Unique cases per country per year ####
-last_dons_unique1 <- last_dons_raw9 |>
+last_dons_unique1 <- last_dons_raw8 |>
   select(Country, iso2, iso3, Year, icd10n, icd103n, icd104n, icd10c, icd103c, icd104c, 
          icd11c1, icd11c2, icd11c3, icd11l1, icd11l2, icd11l3, Disease, DONs, Definition) |>
   distinct(Year, iso3, icd104c, .keep_all = TRUE) 
