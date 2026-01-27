@@ -1,9 +1,11 @@
 ---
-title: 'README'
-output: 
-  pdf_document:
+title: "README"
+output:
   md_document:
-    variant: markdown_github 
+    variant: markdown_github
+  pdf_document: null
+  html_document:
+    df_print: paged
 ---
 
 ```{r load_data, include=FALSE, message=FALSE, warning=FALSE}
