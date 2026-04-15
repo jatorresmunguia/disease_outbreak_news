@@ -232,8 +232,7 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Mpox: recombinant virus with genomic elements of clades Ib and IIb - Global" ~ "Monkeypox",
-    TRUE ~ "Other viral infections of unspecified site"
+    Outbreak == "Avian Influenza A(H9N2) - Italy" ~ "Influenza due to identified zoonotic or pandemic influenza virus"
     )) 
 
 # Merge with icd
@@ -256,18 +255,9 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
-  mutate(repeated_row = case_when(
-    Outbreak == "Mpox: recombinant virus with genomic elements of clades Ib and IIb - Global" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Outbreak) |>
   mutate(Country = case_when(
-    Outbreak == "Nipah virus infection - Bangladesh" ~ "Bangladesh",
-    Outbreak == "Nipah virus infection - India" ~ "India",
-    Outbreak == "Mpox: recombinant virus with genomic elements of clades Ib and IIb - Global" & row_number() == 1  ~ "United Kingdom of Great Britain and Northern Ireland",
-    Outbreak == "Mpox: recombinant virus with genomic elements of clades Ib and IIb - Global" & row_number() == 2  ~ "India",
-    TRUE ~ NA
-  )
+    Outbreak == "Avian Influenza A(H9N2) - Italy" ~ "Italy"
+    )
   ) |>
   glimpse()
 
