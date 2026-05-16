@@ -232,8 +232,10 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
   mutate(icd104n = case_when(
-    Outbreak == "Avian Influenza A(H9N2) - Italy" ~ "Influenza due to identified zoonotic or pandemic influenza virus"
-    )) 
+    Outbreak == "Measles - Bangladesh" ~ "Measles",
+    Outbreak == "Hantavirus cluster linked to cruise ship travel, Multi-country" ~ "Hantavirus (cardio-)pulmonary syndrome",
+    )) |>
+  glimpse()
 
 # Merge with icd
 last_dons_raw3 <- last_dons_raw2 |>
@@ -255,8 +257,21 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
+  mutate(repeated_row = case_when(
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON599" ~ 2,
+    TRUE ~ 1)) |>
+  uncount(repeated_row) |>
+  group_by(Link) |>
   mutate(Country = case_when(
-    Outbreak == "Avian Influenza A(H9N2) - Italy" ~ "Italy"
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON599" & row_number() == 1  ~ "Saint Helena Ascension and Tristan da Cunha",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON599" & row_number() == 2  ~ "South Africa",
+    TRUE ~ NA
+  )
+  ) |>
+  mutate(Country = case_when(
+    Outbreak == "Measles - Bangladesh" ~ "Bangladesh", 
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON600" ~ "Switzerland",
+    TRUE ~ Country
     )
   ) |>
   glimpse()
