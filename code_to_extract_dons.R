@@ -231,14 +231,7 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 # Extracting disease name, I keep working with the last_dons_raw1, DONs to update
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
-  mutate(icd104n = case_when(
-    Outbreak == "Ebola disease caused by Bundibugyo virus, Democratic Republic of the Congo & Uganda" ~ "Ebola virus disease",
-    Outbreak == "Hantavirus outbreak linked to cruise ship travel, Multi-locations" ~ "Hantavirus (cardio-)pulmonary syndrome",
-    Outbreak == "Nipah virus disease - India" ~ "Other viral infections of unspecified site",
-    Outbreak == "Yellow fever - Global" ~ "Yellow fever, unspecified",
-    Outbreak == "Hantavirus outbreak linked to cruise ship travel, Multi-locations" ~ "Hantavirus (cardio-)pulmonary syndrome",
-    Outbreak == "Ebola disease caused by Bundibugyo virus - Democratic Republic of the Congo" ~ "Ebola virus disease",
-  )) |>
+  mutate(icd104n = "Ebola virus disease") |>
   glimpse()
 
 # Merge with icd
@@ -262,127 +255,18 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
   mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON612" ~ 3,
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" ~ 3,
     TRUE ~ 1)) |>
   uncount(repeated_row) |>
   group_by(Link) |>
   mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON612" & row_number() == 1  ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON612" & row_number() == 2  ~ "Uganda",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON612" & row_number() == 3  ~ "France",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON615" ~ "Congo Democratic Republic of the",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON614" ~ "Congo Democratic Republic of the",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" & row_number() == 1 ~ "Congo Democratic Republic of the",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" & row_number() == 2 ~ "Uganda",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" & row_number() == 3 ~ "France",
     TRUE ~ NA
     )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON611" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON611" & row_number() == 1  ~ "South Africa",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON611" & row_number() == 2  ~ "France",
-    TRUE ~ Country
-    )) |>
-  
-  mutate(Country = case_when(
-    Outbreak == "Nipah virus disease - India" ~ "Measles",
-    TRUE ~ Country
-    )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" ~ 14,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 1  ~ "Burkina Faso",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 2  ~ "Central African Republic",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 3  ~ "Cameroon",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 4  ~ "Angola",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 5  ~ "Côte d'Ivoire",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 6  ~ "Gabon",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 7  ~ "Ghana",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 8  ~ "Nigeria",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 9  ~ "Bolivia (Plurinational State of)",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 10  ~ "Brazil",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 11  ~ "Colombia",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 12  ~ "Ecuador",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 13  ~ "Peru",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON610" & row_number() == 14  ~ "Venezuela (Bolivarian Republic of)",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON608" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON608" & row_number() == 1  ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON608" & row_number() == 2  ~ "Uganda",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON607" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON607" & row_number() == 1  ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON607" & row_number() == 2  ~ "Uganda",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON606" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON606" & row_number() == 1  ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON606" & row_number() == 2  ~ "Uganda",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON605" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON605" & row_number() == 1  ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON605" & row_number() == 2  ~ "Uganda",
-    TRUE ~ Country
-  )) |>
-
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON604" ~ 3,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON604" & row_number() == 1  ~ "Canada",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON604" & row_number() == 2  ~ "Netherlands",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON604" & row_number() == 3  ~ "Spain",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON603" ~ "Congo Democratic Republic of the",
-    TRUE ~ Country
-  )) |>
-  
-  mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON602" ~ 2,
-    TRUE ~ 1)) |>
-  uncount(repeated_row) |>
-  group_by(Link) |>
-  mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON602" & row_number() == 1  ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON602" & row_number() == 2  ~ "Uganda",
-    TRUE ~ Country
-  )) |>
   
   glimpse()
 
