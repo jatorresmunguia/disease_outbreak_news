@@ -1,8 +1,3 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 ### **A global dataset of pandemic- and epidemic-prone disease outbreaks**
 
 ### **Torres Munguía, J.A.; Badarau, F.C.; Díaz Pavez, L.R.; Martínez-Zarzoso, I.; & Wacker, Konstantin M.**
@@ -53,7 +48,7 @@ can contact me via [GitHub](https://github.com/jatorresmunguia),
 [X](https://x.com/jtorresmunguia), or
 [here](https://juan-torresmunguia.netlify.app/contact/).
 
-The last version of the dataset was updated on 03/07/2026 and contains
-information on 3561 **outbreaks**, associated with 91 infectious
-diseases that occurred from 01/01/1996 to 03/07/2026 in 236 countries
+The last version of the dataset was updated on 10/10/2026 and contains
+information on 3568 **outbreaks**, associated with 92 infectious
+diseases that occurred from 01/01/1996 to 10/10/2026 in 236 countries
 and territories worldwide.
