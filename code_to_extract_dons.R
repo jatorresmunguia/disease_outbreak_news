@@ -49,7 +49,7 @@ data <- data.frame("Outbreak" = NA,
                    "Description" = NA,
                    "Link" = NA)
 
-rD <- rsDriver(browser = "firefox", port = 1808L,  # between 0 and 65535
+rD <- rsDriver(browser = "firefox", port = 1806L,  # between 0 and 65535
                phantomver = NULL,
                chromever = NULL)
 
@@ -231,7 +231,8 @@ icd <- readxl::read_xlsx(path = "classification/icd1011.xlsx")
 # Extracting disease name, I keep working with the last_dons_raw1, DONs to update
 ## DONs related to multiple diseases?
 last_dons_raw2 <- last_dons_raw1 |>
-  mutate(icd104n = "Ebola virus disease") |>
+  mutate(icd104n = case_when(Outbreak == "Pneumonia of undetermined etiology - Russian Federation" ~ "Pneumonia, unspecified", 
+                             TRUE ~ "Ebola virus disease")) |>
   glimpse()
 
 # Merge with icd
@@ -254,20 +255,18 @@ iso <- readxl::read_xlsx(path = "classification/isocodes.xlsx")
 ## DONs related to multiple countries?
 # Country names as in ISO
 last_dons_raw4 <- last_dons_raw3 |>
+  mutate(Country = case_when(Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON620" ~ "Russian Federation")) |> 
   mutate(repeated_row = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" ~ 3,
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON619" ~ 2, 
     TRUE ~ 1)) |>
   uncount(repeated_row) |>
   group_by(Link) |>
   mutate(Country = case_when(
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON615" ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON614" ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" & row_number() == 1 ~ "Congo Democratic Republic of the",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" & row_number() == 2 ~ "Uganda",
-    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON613" & row_number() == 3 ~ "France",
-    TRUE ~ NA
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON620" ~ "Russian Federation",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON619" & row_number() == 1 ~ "Congo Democratic Republic of the",
+    Link == "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON619" & row_number() == 2 ~ "Uganda",
+    TRUE ~ "Congo Democratic Republic of the"
     )) |>
-  
   glimpse()
 
 ## Adding iso country names and codes
